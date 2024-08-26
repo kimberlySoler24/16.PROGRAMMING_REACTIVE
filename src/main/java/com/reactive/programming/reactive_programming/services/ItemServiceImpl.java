@@ -5,6 +5,7 @@ import com.reactive.programming.reactive_programming.handlers.NotFoundException;
 import com.reactive.programming.reactive_programming.models.Item;
 import com.reactive.programming.reactive_programming.models.dto.ItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,12 +31,11 @@ public class ItemServiceImpl implements ItemService{
         return itemRepository.save(new Item(item.getName()));
     }
 
-    @Override
-    public Mono<Void> deleteById(Long id) {
-        return itemRepository.findById(id).flatMap(item -> {
-            itemRepository.delete(item);
-            return Mono.empty();
-        });
+    public Mono<ResponseEntity<String>> deleteById(Long id) {
+        return itemRepository.findById(id)
+                .flatMap(item -> itemRepository.delete(item)
+                        .then(Mono.just(ResponseEntity.ok("Item eliminado correctamente"))))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @Override

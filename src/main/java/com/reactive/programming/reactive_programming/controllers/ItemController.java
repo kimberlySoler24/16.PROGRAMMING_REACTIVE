@@ -35,11 +35,10 @@ public class ItemController {
 
     @DeleteMapping("/deleteItem/{id}")
     public  Mono<ResponseEntity<String>> deleteById(@PathVariable Long id){
-        itemService.deleteById(id);
-        return Mono.just(ResponseEntity.noContent().build());
+        return itemService.deleteById(id);
     }
 
-    @PutMapping("/updateItem/{id}")
+    @PutMapping("/updateItem")
     public Mono<Item> updateItem(@RequestBody Item item){
         return itemService.update(item);
     }
